@@ -1,0 +1,217 @@
+/* Name: MUNIR, Jawad
+matrno: 158385
+This is the same program but its done using linked lists , I hope that the professor may also check this program and then evaluate my final grades
+for the exam. As i did an unfortunate mistake of reading the file with an array of char pionters of 1000 size as i was confused either the lines 
+in the file are always 1000 , so did a mess. But this program is actually really well prepared so in order to show the professor that i know how to
+handle linked lists.
+NOTE:
+     THIS IS NOT THE WAY I DID MY EXAM IN CLASS , THE WAY I DID MY EXAM WAS WITH AN ARRAY OF 1000 LINES , AND THE COPY OF THAT COMPLETE RUNNING
+      PROGRAM IS ATTACHED TO THE EMAIL.*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <conio.h>
+
+struct candidate{
+		 char fcandidate[30]; //full name of the canidate
+		 int vote;// vote that he got
+		 struct candidate *nextList;// piont to next in list
+		 }Candidate;
+typedef struct candidate *CANDIDATEPNT;
+CANDIDATEPNT headList=NULL;
+void sort();// funtion to sort in descending order the name of the canidates w.r.t votes they got.
+int main()
+{
+	 char buffer[30];
+	 char *ck;
+	 char tempName[40];
+	 char cname[40];
+	 char command;
+	 FILE *fp;
+	 int control,check=0,qt,ch,n=0;
+	 CANDIDATEPNT  candidateList, tempPnt;
+	 // read from file
+     printf(" \n\n******************************************************\n");
+	 printf(" *             VOTING SYSTEM                          *\n");
+	 printf("******************************************************\n\n\n");
+	 
+	 do
+	 {
+				 control=0;
+	 if((fp= fopen("candidate.txt","r"))==NULL)
+	 {
+			printf("file could not open\n");
+			control=1;
+			}
+	 else{
+			 headList=NULL;
+	 while(fgets(buffer,29,fp)!=NULL)
+	 {
+
+		  candidateList=(CANDIDATEPNT)malloc(sizeof(struct candidate));
+		candidateList->vote=0;
+		strcpy(candidateList->fcandidate,buffer);
+		candidateList->nextList=headList;
+		headList=candidateList;
+	            }
+			}
+			while(candidateList->nextList!=NULL){
+					strcpy(tempName,candidateList->fcandidate);
+					tempPnt=candidateList->nextList;
+					while((candidateList=candidateList->nextList)!=NULL){
+								  if(strcmp(candidateList->fcandidate,tempName)==0){
+								  //printf("duplicate names, abort execution\n");
+								  check++;
+								  }
+					}
+					candidateList=tempPnt;
+
+	}
+	if(check >=1){
+	printf(" duplicates , abort execution");
+	//exit (0);
+}
+else
+	  {
+			printf(" BEFORE ENTERING THE VOTE READ THE MENU \n\n");
+			printf(">>\n");
+			printf(" enter\n <V> for entering first characters of canidate name who you want to vote\n");
+			printf(" <Q> for finishing the reading of vote\n\n");
+				do
+			{
+			qt=1;
+			scanf("%c",&command);
+				/*if(command=="\n"){
+			scanf("%c",&command);
+			}*/
+
+			command=toupper(command);
+
+			switch(command)
+			{
+					 case'V':
+									  ch=0;
+								printf("enter the first characters of candidate name\n");
+								fflush(stdin);
+								fgets(cname,30,stdin);
+                                if (   (ck=strchr(cname,'\n') )!=NULL )
+								       *ck='\0';
+								
+								n=strlen(cname);
+		 for(candidateList=headList;candidateList!=NULL;candidateList=candidateList->nextList){
+			 //printf("the canidate name is : %s",candidateList->fcandidate);
+		 if((strncmp(candidateList->fcandidate,cname,n)==0)){
+			//printf("vote are %d\n",candidateList->vote);
+						ch++;
+                    }//if
+                }//for
+						
+						if(ch==1){
+      for(candidateList=headList;candidateList!=NULL;candidateList=candidateList->nextList){
+			 //printf("the canidate name is : %s",candidateList->fcandidate);
+		 if((strncmp(candidateList->fcandidate,cname,n)==0)){
+                        candidateList->vote=candidateList->vote+1;
+                        break;
+                        }//if
+                   }//for
+            }//if
+                        if(ch>1){
+								 printf("The vote given is Ambigious,please by giving the command agian enter your vote:\n");
+								 printf("The characters that you have given refers to %d candidates\n",ch);
+								 printf("type more characters to be paticular about your candidate by entering the command and the name agian:\n");
+								 break;
+								 }//end if*/
+				  	if(ch==0){
+		             printf( "candidate name not found , your vote is ignored ,please by giving the command agian enter you vote agian:\n");
+											 //scanf("%s",cname);
+											 break;
+						 }
+
+						 break;
+
+						 case'Q':
+									//printing the voting:
+															  //while(candidateList->nextList!=NULL){
+				for(candidateList=headList;candidateList!=NULL;candidateList=candidateList->nextList){
+				printf("the canidate name is %s , and the vote they got %d:\n\n",candidateList->fcandidate,candidateList->vote);
+				}
+				sort();
+				printf("The candidate name with decreasing sorted order of their election result i.e votes they got\n\n\n");
+				for(candidateList=headList;candidateList!=NULL;candidateList=candidateList->nextList){
+                 if(candidateList->vote>=1){
+             
+             printf("The candidate name is: %s , and the votes that he got:%d\n",candidateList->fcandidate,candidateList->vote);
+             }
+             else
+             break;
+             }
+				
+
+				qt=0;
+				free(candidateList);
+				break;
+				}// for switch
+						 }while(qt);
+				} //for else
+
+
+}while(control);
+
+
+	fclose(fp);
+	free(candidateList);
+
+
+
+
+
+
+	 system("PAUSE");
+	 return 0;
+//getch();
+  }
+  // the defination of sort function
+void sort()
+{
+     CANDIDATEPNT currentpos,current, previous, temp;
+     temp=(CANDIDATEPNT)malloc(sizeof(struct candidate));
+    current =headList;
+    char tempname[30];
+    previous = current;
+    current = current->nextList;
+
+    while(current != NULL)
+    {
+        
+        if(current->vote > previous->vote)
+        {
+/*
+            puts(current->name);
+            puts(previous->name);
+*/
+        
+           // printf("Starting strcpy\n");
+            strcpy(tempname, previous->fcandidate);
+            //puts(tempname);
+            strcpy(temp->fcandidate, tempname);
+            //puts(temp->name);
+            temp->vote=previous->vote;
+           // printf("Strcpy Done\n");
+
+            strcpy(tempname, current->fcandidate);
+            strcpy(previous->fcandidate, tempname);
+            previous->vote=current->vote;
+
+            strcpy(tempname,temp->fcandidate );
+            strcpy(current->fcandidate, tempname);
+            current->vote=temp->vote;
+
+            current = headList;
+        }
+        previous = current;
+        current=current->nextList;
+
+    }
+}
+  

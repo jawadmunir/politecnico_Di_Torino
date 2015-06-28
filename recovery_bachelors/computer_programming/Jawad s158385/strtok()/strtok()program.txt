@@ -1,0 +1,111 @@
+/* this is the program using strtok Library function in order to seperate the time format into hours minutes and seconds.  
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <conio.h>
+// Program using directly sscanf() to read the file format in HH:MM:SS and write it into data structure. 
+struct athlete{
+					int id; // for athlete id
+					char hour;
+					char min;
+					char sec;
+					struct athlete *nextList;
+					}Athlete;
+typedef struct athlete *ATHLETEPNT;
+ATHLETEPNT headList= NULL;
+void Ranking(ATHLETEPNT , int);
+void printascendingorder();// never used 
+void swap();// never used 
+void output();// never used
+int main()
+{
+    int HOUR, MIN, SEC,n=0;
+	 char buffer[40];
+	 int control,counter=0;
+	 int pass,i=0,hold=0,t=0;
+	 char a, b ,c;
+	 FILE *fp;
+	 ATHLETEPNT   athleteList; 
+	 printf(" \n\n******************************************************\n");
+	 printf(" *             RANKING OF RACE                          *\n");
+	 printf("******************************************************\n\n\n");
+	 printf("the read file is as \n\n");
+	   printf("<Athlete id> \t <Arrival time>\n");
+	 do
+	 {
+				 control=0;
+	 if((fp= fopen("race.txt","r"))==NULL)
+	 {
+			printf("file could not open\n");
+			control=1;
+			}
+	 else{
+			 headList=NULL;
+	 while(fgets(buffer,39,fp)!=NULL)
+	 {
+	 athleteList=(ATHLETEPNT)malloc(sizeof(struct athlete));
+	 sscanf(buffer," %d %d %c %d %c %d",&athleteList->id,&athleteList->hour,&a,&athleteList->min,&b,&athleteList->sec);
+        athleteList->nextList=headList;
+		headList=athleteList;
+		counter++;
+		printf("\t %d \t %+d:%02d:%02d \n",athleteList->id,athleteList->hour,athleteList->min,athleteList->sec);		
+        }// end while
+			}//end else
+			Ranking(headList , counter);// function call
+ system("PAUSE");
+
+}while(control);
+ return 0;
+}// end main
+void Ranking(ATHLETEPNT headList, int counter)
+{
+     int Atime[counter];// for time in seconds
+     int aid[counter];// for athlete id
+     int h[counter];
+	 int delay[counter];
+	 ATHLETEPNT athleteList;
+	 int n=0,HOUR=0,MIN=0,SEC=0,pass,i,hold=0,t=0;
+
+for(athleteList=headList;athleteList!=NULL && n<counter;athleteList=athleteList->nextList)
+     {
+                        HOUR=(athleteList->hour)*60*60;
+                        MIN=(athleteList->min)*60;
+                        SEC=athleteList->sec;
+                        Atime[n]=HOUR+MIN+SEC;// time in seconds
+                        aid[n]=athleteList->id; // athlete id
+                         n++;
+                         }
+                         // sorting
+     for(pass=1,athleteList=headList;athleteList!=NULL && pass<counter;athleteList=athleteList->nextList,pass++){
+         for(i=0;i<counter-1;i++){
+                                  // swap
+                                  if(Atime[i]>Atime[i+1]){
+                                                          hold=Atime[i];
+                                                          Atime[i]=Atime[i+1];
+                                                          Atime[i+1]=hold;
+                                                          t=aid[i];
+                                                          aid[i]= aid[i+1];
+                                                          aid[i+1]=t;                            
+                                                          }// end if
+                                                          
+                                                          }// end inner for
+                                  h[0]=Atime[0];                                                
+          } // end outer for 
+         for(i=0;i<counter-1;i++){
+         delay[i]=Atime[i+1]-Atime[0];
+         h[i+1]=delay[i];
+         }
+         //  converting seconds back to HH:MM:SS
+         for(i=0;i<counter;i++){
+         SEC=h[i]%60;
+         MIN=(h[i]/60)%60;
+         HOUR=h[i]/3600;
+    printf("\n\n %d \t %+d:%02d:%02d \n",aid[i],HOUR,MIN,SEC);
+         }
+         }
+         
+         
+         
